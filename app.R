@@ -18,7 +18,7 @@ possColors <- c("Blue","Gold","Gray","Green","White")
 ui <- fluidPage(
    
    # Application title
-   titlePanel("ND Stadium Fan Gear Color Mix"),
+   titlePanel("Stadium Fan Gear Color Mix"),
    
    # Sidebar with a slider input for percentage of away fans
    sidebarLayout(
