@@ -24,17 +24,18 @@ ui <- fluidPage(
    sidebarLayout(
       sidebarPanel(
         
+        selectInput("homeColors",
+                    label = "Select Home Team Color(s) to Use",
+                    unique(as.character(possColors)),
+                    multiple = TRUE),
+        
         sliderInput("awayPct",
                     label = "Away Team Color Percentage",
                     min = 0.0,
                     max = 1.0,
                     value = 0.25,
-                    step = 0.05),
+                    step = 0.05)
         
-        selectInput("homeColors",
-                    label = "Select Home Team Color(s) to Use",
-                    unique(as.character(possColors)),
-                    multiple = TRUE)
       ),
       
       # Show a plot of the rectangular seating area
@@ -49,12 +50,9 @@ server <- function(input, output) {
    
    output$xyPlot <- renderPlot({
     # generate plot based on awaypct and colors from ui.R
-     print(input$homeColors)
      numHome <- length(input$homeColors)
-     print(numHome)
      homepct <- (1-as.numeric(input$awayPct))/numHome
      probs <- c(rep(homepct,numHome),as.numeric(input$awayPct))
-     print(probs)
      GearColors <- sample(c(input$homeColors,awayColor),
                      1656,
                      prob=probs,
