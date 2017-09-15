@@ -1,0 +1,12 @@
+name: fangearcolor
+title: fangearcolor
+username:
+account: snestler
+server: shinyapps.io
+hostUrl: https://api.shinyapps.io/v1
+appId: 215158
+bundleId: 983857
+url: https://snestler.shinyapps.io/fangearcolor/
+when: 1505507375.35516
+asMultiple: FALSE
+asStatic: FALSE

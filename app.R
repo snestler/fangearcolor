@@ -1,15 +1,14 @@
 #
-# This is a Shiny web application. You can run the application by clicking
-# the 'Run App' button above.
-#
-# Find out more about building applications with Shiny here:
-#
-#    http://shiny.rstudio.com/
+# This is a Shiny web application.
+# Authors:  Scott Nestler & Seth Berry
 #
 
 library(shiny)
 library(ggplot2)
 library(colourpicker)
+
+# Deploy to shinyapps.io
+library(rsconnect)
 
 # Define UI for application that draws an x-y scatter plot
 ui <- fluidPage(
@@ -54,7 +53,6 @@ server <- function(input, output) {
     numHome <- length(input$homeColor)
     homePct <- (1-as.numeric(input$awayPct))/numHome
     probs <- c(rep(homePct,numHome),as.numeric(input$awayPct))
-    print(probs)
     GearColors <- sample(c(input$homeColor,input$awayColor),
                          1656,
                          prob=probs,
