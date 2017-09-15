@@ -9,10 +9,7 @@
 
 library(shiny)
 library(ggplot2)
-
-# Set the away team color and possible home colors
-awayColor <- "Red"       #Red for now; may vary later
-possColors <- c("Blue","Gold","Gray","Green","White")
+library(colourpicker)
 
 # Define UI for application that draws an x-y scatter plot
 ui <- fluidPage(
@@ -23,18 +20,17 @@ ui <- fluidPage(
    # Sidebar with a slider input for percentage of away fans
    sidebarLayout(
       sidebarPanel(
+
+        colourInput("homeColor", "Select Home Team Color to Use", "#0C2340"),
         
-        selectInput("homeColors",
-                    label = "Select Home Team Color(s) to Use",
-                    unique(as.character(possColors)),
-                    multiple = TRUE),
+        colourInput("awayColor", "Select Away Team Color", "red"),
         
         sliderInput("awayPct",
                     label = "Away Team Color Percentage",
                     min = 0.0,
-                    max = 1.0,
+                    max = 0.99,
                     value = 0.25,
-                    step = 0.05)
+                    step = 0.01)
         
       ),
       
@@ -55,13 +51,11 @@ server <- function(input, output) {
   })
   
   selectedData <- reactive({
-    print(input$homeColors)
-    numHome <- length(input$homeColors)
-    print(numHome)
-    homepct <- (1-as.numeric(input$awayPct))/numHome
-    probs <- c(rep(homepct,numHome),as.numeric(input$awayPct))
+    numHome <- length(input$homeColor)
+    homePct <- (1-as.numeric(input$awayPct))/numHome
+    probs <- c(rep(homePct,numHome),as.numeric(input$awayPct))
     print(probs)
-    GearColors <- sample(c(input$homeColors,awayColor),
+    GearColors <- sample(c(input$homeColor,input$awayColor),
                          1656,
                          prob=probs,
                          replace=TRUE)
@@ -74,7 +68,7 @@ server <- function(input, output) {
   output$xyPlot = renderPlot({
     ggplot(selectedData(), aes(x=seats,y=rows,color=GearColors)) +
       geom_point(shape=15,size=3) +              #Use filled squares
-      scale_color_manual(values=sort(c(input$homeColors,awayColor))) +
+      scale_color_manual(values=sort(c(input$homeColor,input$awayColor))) +
       theme_minimal()
   })
 }
