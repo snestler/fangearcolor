@@ -47,26 +47,37 @@ ui <- fluidPage(
 
 # Define server logic required to draw the plot
 server <- function(input, output) {
-   
-   output$xyPlot <- renderPlot({
-    # generate plot based on awaypct and colors from ui.R
-     numHome <- length(input$homeColors)
-     homepct <- (1-as.numeric(input$awayPct))/numHome
-     probs <- c(rep(homepct,numHome),as.numeric(input$awayPct))
-     GearColors <- sample(c(input$homeColors,awayColor),
-                     1656,
-                     prob=probs,
-                     replace=TRUE)
-     dat2 <- data.frame(GearColors, seats = rep(1:46,36),
-                        rows = rep(1:36,each=46))
-      
-      # draw the plot
-      ggplot(dat2, aes(x=seats,y=rows,color=GearColors)) +
-        geom_point(shape=15,size=3) +              #Use filled squares
-        scale_color_manual(values=sort(c(input$homeColors,awayColor)))
-   })
+  
+  cols <- reactive({
+    lapply(seq_along(dat), function(i) {
+      colourInput(paste("col", i, sep="_"), "Choose colour:", "black")        
+    })
+  })
+  
+  selectedData <- reactive({
+    print(input$homeColors)
+    numHome <- length(input$homeColors)
+    print(numHome)
+    homepct <- (1-as.numeric(input$awayPct))/numHome
+    probs <- c(rep(homepct,numHome),as.numeric(input$awayPct))
+    print(probs)
+    GearColors <- sample(c(input$homeColors,awayColor),
+                         1656,
+                         prob=probs,
+                         replace=TRUE)
+    dat2 <- data.frame(GearColors, seats = rep(1:46,36),
+                       rows = rep(1:36,each=46))
+    
+    return(dat2)
+  })
+  
+  output$xyPlot = renderPlot({
+    ggplot(selectedData(), aes(x=seats,y=rows,color=GearColors)) +
+      geom_point(shape=15,size=3) +              #Use filled squares
+      scale_color_manual(values=sort(c(input$homeColors,awayColor))) +
+      theme_minimal()
+  })
 }
-
 # Run the application 
 shinyApp(ui = ui, server = server)
 
