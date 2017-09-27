@@ -29,7 +29,12 @@ ui <- fluidPage(
                     min = 0.0,
                     max = 0.99,
                     value = 0.25,
-                    step = 0.01)
+                    step = 0.01),
+        
+        radioButtons("grouped", 
+                     "Select Minimum Ticket Grouping",
+                     choices = list("1 (Singles)" = 1, "2 (Pairs)" = 2, "4 (Quads)" = 4),
+                     selected = 1)
         
       ),
       
@@ -43,20 +48,33 @@ ui <- fluidPage(
 # Define server logic required to draw the plot
 server <- function(input, output) {
   
-  cols <- reactive({
-    lapply(seq_along(dat), function(i) {
-      colourInput(paste("col", i, sep="_"), "Choose colour:", "black")        
-    })
-  })
+  # Commented this function out as it doesn't appear to be used anywhere
+  # cols <- reactive({
+  #   lapply(seq_along(dat), function(i) {
+  #     colourInput(paste("col", i, sep="_"), "Choose colour:", "black")        
+  #   })
+  # })
   
   selectedData <- reactive({
     numHome <- length(input$homeColor)
     homePct <- (1-as.numeric(input$awayPct))/numHome
     probs <- c(rep(homePct,numHome),as.numeric(input$awayPct))
-    GearColors <- sample(c(input$homeColor,input$awayColor),
-                         1656,
-                         prob=probs,
-                         replace=TRUE)
+    if(input$grouped==2) {
+      GearColors <- rep("green",1656)
+      print(GearColors[1:5])
+    } 
+    else if(input$grouped==4) {
+      GearColors <- rep("purple",1656)
+      print(GearColors[1:5])
+    } 
+    else {
+      GearColors <- sample(c(input$homeColor,input$awayColor),
+                           1656,
+                           prob=probs,
+                           replace=TRUE)
+      print(GearColors[1:5])
+    }
+    
     dat2 <- data.frame(GearColors, seats = rep(1:46,36),
                        rows = rep(1:36,each=46))
     
